@@ -3,49 +3,22 @@ const Place = require("../../src/models/place");
 
 async function updatePlace(request,response) {
     try {
-        const {id} = request.params;
-        const {
-            name,
-            phone,
-            openingHours,
-            description,
-            latitude,
-            longitude,
-        } = request.body;
+        const id = await Place.findByPk(request.params.id)
 
-        const idExisting = await Place.findByPk(id);
-
-        if (!idExisting) {
-            return response.statu(404).json({message: "Lugar não encontrado."})
+        if((!id)){
+            return response.status(404).json({message: 'Lugar não encontrado no banco de dados.'})
         }
-        
-        const latitudeExisting = await Place.findOne({
-            where: {
-                latitude,
-            },
-        });
 
-        if (latitudeExisting) {
-            const place = await Place.findByPk(id);
-            place.name = name;
-            place.phone = phone,
-            place.openingHours = openingHours;
-            place.description = description;
-            place.latitude = latitude;
-            place.longitude = longitude;
-            
-            const placeUpdate = await place.save();
-            
-            return response.status(409).json({ message: "Feito." });
-            
-
-            response.status(200).json({message: 'Alteração feita com sucesso.'})
-
-/*         }else{ */
-        }
-        
+        id.name = request.body.name
+        id.phone = request.body.phone
+        id.openingHours = request.body.openingHours
+        id.description = request.body.description
+        id.latitude = request.body.latitude
+        id.longitude = request.body.longitude
+        await id.save()
+        response.status(200).json(id)
     } catch (error) {
-        return response.status(400).json({ message: "Não possivel processar a solicitacao" });
+        response.status(500).json({message: 'Não possivel processar a solicitacao'})
     }
 }
 
