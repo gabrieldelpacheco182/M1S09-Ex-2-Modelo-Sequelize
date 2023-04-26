@@ -1,8 +1,8 @@
-const Place = require("../models/place");
+const Place = require("../models/place");//importando o arquivo que possui todos os itens que formam a tabela.
 
-async function createPlace(request,response) {
-    try {
-        const place = {
+async function createPlace(request,response) {//função assicrona, pois necessito atraves do await esperar as informações serem colocadas ao banco de dados.
+    try {// usei try e catch para tratar minhas requisições e respostas.
+        const place = {//varaivel recebendo as informações pelo body
             name: request.body.name,
             phone: request.body.phone,
             openingHours: request.body.openingHours,
@@ -10,23 +10,12 @@ async function createPlace(request,response) {
             latitude: request.body.latitude,
             longitude: request.body.longitude,
         };
-
-        const existingLatitude = await Place.findOne({
-            where: {
-                latitude: request.body.latitude
-            }
-        });
-        if(!existingLatitude){
-            
             const newPlace = await Place.create(place)
-            return  response.status(201).json(newPlace);
-        }else{
-            response.status(409).json({message: 'Lugar já cadastrado no banco'})
-        }
+            return  response.status(201).json(newPlace);// retornando o resultado da criação do dado na tabela place
 
-    } catch (error) {
-        return response.status(500).json({message: error.message})
+    } catch (error) {//Erro generico.
+        return response.status(500).json({message: "Não foi possivel processar solicitação"})
     }
 }
 
-module.exports = createPlace;
+module.exports = createPlace;// exportando variavel a qual vai ser usada em outros lugares da API.
